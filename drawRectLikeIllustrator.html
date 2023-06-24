@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Rect Drawing</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        border: 1px solid blue;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"> </canvas>
+
+    <script>
+      let canvas = document.getElementById("canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let ctx = canvas.getContext("2d");
+      let property = {
+        startX: 0,
+        startY: 0,
+        endX: 0,
+        endY: 0,
+      };
+      let isDrawing = false;
+
+      function drawRectangle(endX, endY) {
+        ctx.fillStyle = "rgba(39, 140, 245, 0.54)";
+        ctx.strokeStyle = "rgba(39, 88, 245, 1)";
+        ctx.lineWidth = 5;
+        ctx.fillRect(
+          property.startX,
+          property.startY,
+          property.endX - property.startX,
+          property.endY - property.startY
+        );
+        ctx.strokeRect(
+          property.startX,
+          property.startY,
+          property.endX - property.startX,
+          property.endY - property.startY
+        );
+      }
+
+      canvas.addEventListener("mousedown", function (event) {
+        isDrawing = true;
+        property.startX = event.clientX;
+        property.startY = event.clientY;
+        console.log("drawing started");
+        isDrawing ? drawRectangle() : null;
+      });
+      canvas.addEventListener("mousemove", function (event) {
+        property.endX = event.clientX;
+        property.endY = event.clientY;
+        console.log("continue drawing");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        isDrawing ? drawRectangle() : null;
+      });
+
+      canvas.addEventListener("mouseup", function (event) {
+        isDrawing = false;
+        console.log("drawing ended");
+      });
+    </script>
+  </body>
+</html>
