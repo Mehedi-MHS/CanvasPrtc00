@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reduce Image Size using toDataURL() parameter</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" onchange="handleChange(event)" />
+
+    <script type="text/javascript">
+      function handleChange(event) {
+        var file = event.target.files[0];
+        var info = {
+          realSize: 0,
+          resizedSize: 0,
+          realWidth: 0,
+          realHeight: 0,
+        };
+        info.realSize = file.size / 1000 + " KB";
+        var reader = new FileReader();
+        reader.onload = (event) => {
+          var img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            info.realWidth = img.width;
+            info.realHeight = img.height;
+            alert(JSON.stringify(info));
+            /*
+            {"realSize":"539.684 KB","resizedSize":0,"realWidth":860,"realHeight":604}
+            */
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    </script>
+  </body>
+</html>
