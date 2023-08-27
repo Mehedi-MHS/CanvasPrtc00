@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reduce Image Size using toDataURL() parameter</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      .container {
+        width: 95%;
+        height: 200px;
+        border: 3px dashed blue;
+        margin: 10px auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" onchange="handleChange(event)" />
+    <div class="container">
+      <img id="original" style="width: 100%" />
+      <img id="resized" style="width: 100%" />
+    </div>
+    <script type="text/javascript">
+      //Here we will reduce image size by 50%;
+      async function handleChange(event) {
+        const file = event.target.files[0];
+        var parcentage = 0.3; //reduce 70%;
+        var info = {
+          originalSize: 0,
+          resizedSize: 0,
+          originalWidth: 0,
+          originalHeight: 0,
+          canvasWidth: 0,
+          canvasHeight: 0,
+        };
+        info.originalSize = file.size / 1000 + " KB";
+        var reader = new FileReader();
+        reader.onload = async (event) => {
+          let img = new Image();
+          img.src = event.target.result;
+          document.getElementById("original").src = img.src;
+          await new Promise((resolve) => {
+            img.onload = () => {
+              info.originalWidth = img.width;
+              info.originalHeight = img.height;
+              info.canvasWidth = img.width * parcentage; //reduce size 70%
+              info.canvasHeight = img.height * parcentage;
+              resolve();
+            }; //img.onload
+          }); //promise
+
+          //create canvas
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = info.canvasWidth;
+          canvas.height = info.canvasHeight;
+
+          //we cannot use 'file' as image in drawImge because 'file' is not in image format, it is an object.
+          //now we have to create an Image()
+          const imageElement = new Image();
+          imageElement.src = img.src;
+          ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+
+          const resizedImageData = canvas.toDataURL(file.type);
+          info.resizedSize = resizedImageData.length / 1000 + " KB";
+          document.getElementById("resized").src = resizedImageData;
+          alert(JSON.stringify(info));
+        }; //reader.onload
+        reader.readAsDataURL(file);
+      }
+
+      /* Output:
+      {"originalSize":"539.684 KB","resizedSize":"175.342 KB","originalWidth":860,"originalHeight":604,"canvasWidth":430,"canvasHeight":302}
+      */
+    </script>
+  </body>
+</html>
